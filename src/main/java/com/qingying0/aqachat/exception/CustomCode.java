@@ -3,12 +3,15 @@ package com.qingying0.aqachat.exception;
 public enum CustomCode implements ICustomCode {
 
     SUCCESS(200, "成功"),
-    FAIL(2000, "失败"),
+    FAIL(2000, "出现未知错误"),
     PHONE_EXIST(2001, "该手机号已注册"),
     MD5_FAIL(2002, "MD5转化失败"),
     PHONE_NOT_EXIST(2003, "手机号未注册"),
     PASSWORD_FAIL(2004, "密码错误"),
     USERNAME_OR_PASSWORD_OR_PHONE_NULL(2005, "选项不能为空"),
+    SEARCH_USER_FAIL(2006, "未找到到用户"),
+    SEARCH_OUR_FAIL(2007, "不能添加自己为好友"),
+    FRIEND_RELATION_EXIST(2008, "已经添加为好友"),
     FAIL_REQUEST(2009, "不合法的请求"),
     ;
 

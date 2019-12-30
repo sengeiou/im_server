@@ -16,4 +16,6 @@ public class UserDTO {
     private String token;
 
     private String avatarUrl;
+
+    private String description;
 }

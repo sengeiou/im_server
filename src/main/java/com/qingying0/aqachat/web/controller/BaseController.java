@@ -23,7 +23,8 @@ public class BaseController {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ResultDTO<Object> handlerException(Exception e) {
-        log.info("exception " + e);
+        e.printStackTrace();
+//        log.info("throw exception " + e);
         return ResultDTO.errorOf(CustomCode.FAIL);
     }
 }

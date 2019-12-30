@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/user")
 public class LoginController {
 
     @Autowired
@@ -20,6 +19,7 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResultDTO login(String phone, String password) {
+        System.out.println(phone + password);
         UserDTO userDTO = userService.login(phone, password);
         return ResultDTO.okOf(userDTO);
     }

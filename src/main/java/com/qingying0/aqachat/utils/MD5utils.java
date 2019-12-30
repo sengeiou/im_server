@@ -1,5 +1,8 @@
 package com.qingying0.aqachat.utils;
 
+import com.qingying0.aqachat.exception.CustomCode;
+import com.qingying0.aqachat.exception.CustomException;
+
 import java.security.MessageDigest;
 
 public class MD5utils {
@@ -27,7 +30,7 @@ public class MD5utils {
             }
             return new String(str);
         } catch (Exception e) {
-            throw new RuntimeException("MD5失败");
+            throw new CustomException(CustomCode.MD5_FAIL);
         }
     }
 }

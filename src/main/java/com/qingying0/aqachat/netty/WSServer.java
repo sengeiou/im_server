@@ -37,8 +37,9 @@ public class WSServer {
     }
 
 
-    @PostConstruct
+//    @PostConstruct
     public void start() {
+        System.out.println("port = " + port);
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workGroup = new NioEventLoopGroup();
         ServerBootstrap serverBootstrap = new ServerBootstrap()
@@ -55,10 +56,4 @@ public class WSServer {
     public void close() {
 
     }
-
-
-
-
-
-
 }

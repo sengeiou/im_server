@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qingying0.aqachat.mapper.UserSessionMapper">
+  <resultMap id="BaseResultMap" type="com.qingying0.aqachat.entity.UserSession">
+    <id column="session_id" jdbcType="BIGINT" property="sessionId" />
+    <result column="owner_id" jdbcType="BIGINT" property="ownerId" />
+    <result column="participant_ids" jdbcType="VARCHAR" property="participantIds" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="unread_num" jdbcType="INTEGER" property="unreadNum" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="is_muted" jdbcType="BIT" property="isMuted" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_session
+    where session_id = #{sessionId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.qingying0.aqachat.entity.UserSession">
+    insert into user_session (session_id, owner_id, participant_ids, 
+      nickname, create_time, update_time, 
+      unread_num, status, is_muted
+      )
+    values (#{sessionId,jdbcType=BIGINT}, #{ownerId,jdbcType=BIGINT}, #{participantIds,jdbcType=VARCHAR}, 
+      #{nickname,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{unreadNum,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{isMuted,jdbcType=BIT}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.qingying0.aqachat.entity.UserSession">
+    update user_session
+    set owner_id = #{ownerId,jdbcType=BIGINT},
+      participant_ids = #{participantIds,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      unread_num = #{unreadNum,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      is_muted = #{isMuted,jdbcType=BIT}
+    where session_id = #{sessionId,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select session_id, owner_id, participant_ids, nickname, create_time, update_time, 
+    unread_num, status, is_muted
+    from user_session
+    where session_id = #{sessionId,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select session_id, owner_id, participant_ids, nickname, create_time, update_time, 
+    unread_num, status, is_muted
+    from user_session
+  </select>
+  <resultMap id="BaseResultMap" type="com.qingying0.aqachat.entity.UserSession">
+    <id column="session_id" jdbcType="BIGINT" property="sessionId" />
+    <result column="owner_id" jdbcType="BIGINT" property="ownerId" />
+    <result column="participant_ids" jdbcType="VARCHAR" property="participantIds" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="unread_num" jdbcType="INTEGER" property="unreadNum" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="is_muted" jdbcType="TINYINT" property="isMuted" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_session
+    where session_id = #{sessionId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.qingying0.aqachat.entity.UserSession">
+    insert into user_session (session_id, owner_id, participant_ids, 
+      nickname, create_time, update_time, 
+      unread_num, status, is_muted
+      )
+    values (#{sessionId,jdbcType=BIGINT}, #{ownerId,jdbcType=BIGINT}, #{participantIds,jdbcType=VARCHAR}, 
+      #{nickname,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{unreadNum,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{isMuted,jdbcType=TINYINT}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.qingying0.aqachat.entity.UserSession">
+    update user_session
+    set owner_id = #{ownerId,jdbcType=BIGINT},
+      participant_ids = #{participantIds,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      unread_num = #{unreadNum,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      is_muted = #{isMuted,jdbcType=TINYINT}
+    where session_id = #{sessionId,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select session_id, owner_id, participant_ids, nickname, create_time, update_time, 
+    unread_num, status, is_muted
+    from user_session
+    where session_id = #{sessionId,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select session_id, owner_id, participant_ids, nickname, create_time, update_time, 
+    unread_num, status, is_muted
+    from user_session
+  </select>
+</mapper>
