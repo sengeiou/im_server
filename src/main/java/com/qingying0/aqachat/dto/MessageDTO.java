@@ -6,8 +6,6 @@ import lombok.Data;
 public class MessageDTO {
 
     private Integer type;
-    private String data;
-    private Long sendId;
-    private Long targetId;
+    private Object data;
 
 }

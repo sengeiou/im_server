@@ -1,7 +1,7 @@
 package com.qingying0.aqachat.netty.handler;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.qingying0.aqachat.enums.MsgTypeEnum;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -45,11 +45,33 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<TextWebS
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame textWebSocketFrame) throws Exception {
-        String content = textWebSocketFrame.text();
-        System.out.println("接收到消息" + content);
-        for(Channel channel : clients) {
-            channel.writeAndFlush(new TextWebSocketFrame("接收到消息" + content));
+    protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame textWebSocketFrame) throws Exception {
+        String msg = textWebSocketFrame.text();
+        JSONObject msgJson = JSONObject.parseObject(msg);
+        Integer type = msgJson.getInteger("type");
+        System.out.println("type" + type);
+        System.out.println("data = " + msgJson.getJSONObject("data").getInteger("type"));
+        switch (MsgTypeEnum.HEART.getByType(type)) {
+            case HEART: //心跳
+                break;
+            case ONLINE: //上线
+                JSONObject jsonData = msgJson.getJSONObject("data");
+                long userId = jsonData.getLong("userId");
+                int onlinetype = jsonData.getInteger("type");
+                System.out.println(userId + "online");
+                userChannel.put(userId, ctx.channel());
+
+                break;
+            case SENDMESSAGE: //发送消息
+                break;
+            case FRIEND: //好友相关
+                break;
+            case SESSION: //会话相关
+                break;
+            case REQUEST: //请求相关
+                break;
+            default:
+                break;
         }
     }
 }

@@ -19,7 +19,6 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResultDTO login(String phone, String password) {
-        System.out.println(phone + password);
         UserDTO userDTO = userService.login(phone, password);
         return ResultDTO.okOf(userDTO);
     }

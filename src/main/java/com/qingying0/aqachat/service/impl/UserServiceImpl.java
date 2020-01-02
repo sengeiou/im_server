@@ -115,10 +115,12 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserInfoDTO getUserByPhone(String phone) {
         UserInfoDTO userInfoDTO = new UserInfoDTO();
-        System.out.println("search = " + phone);
         User user = userMapper.selectByPhone(phone);
         if(user == null) {
             throw new CustomException(CustomCode.SEARCH_USER_FAIL);
+        }
+        if(user.getId().equals(hostHolder.getUserId())) {
+            throw new CustomException(CustomCode.SEARCH_OUR_FAIL);
         }
         userInfoDTO.setFriend(relationService.getByUserAndFriend(hostHolder.getUserId(), user.getId()) != null);
         BeanUtils.copyProperties(user, userInfoDTO);

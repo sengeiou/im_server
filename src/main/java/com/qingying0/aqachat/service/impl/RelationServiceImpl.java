@@ -4,6 +4,7 @@ import com.qingying0.aqachat.entity.Relation;
 import com.qingying0.aqachat.mapper.RelationMapper;
 import com.qingying0.aqachat.service.IRelationService;
 import com.qingying0.aqachat.utils.IdWorker;
+import com.qingying0.aqachat.utils.SystemConst;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -43,13 +44,15 @@ public class RelationServiceImpl implements IRelationService {
     @Override
     public void saveRelation(Long user1Id, Long user2Id) {
         Relation relation1 = new Relation();
+        relation1.setId(idWorker.nextId());
         relation1.setUserId(user1Id);
         relation1.setFriendId(user2Id);
-        relation1.setId(idWorker.nextId());
+        relation1.setStatus(SystemConst.RELATION_FRIEND);
         Relation relation2 = new Relation();
+        relation2.setId(idWorker.nextId());
         relation2.setUserId(user2Id);
         relation2.setFriendId(user1Id);
-        relation1.setId(idWorker.nextId());
+        relation2.setStatus(SystemConst.RELATION_FRIEND);
         relationMapper.insert(relation1);
         relationMapper.insert(relation2);
     }

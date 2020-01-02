@@ -14,6 +14,7 @@
     <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl" />
     <result column="salt" jdbcType="VARCHAR" property="salt" />
     <result column="push_id" jdbcType="VARCHAR" property="pushId" />
+    <result column="sex" jdbcType="BIT" property="sex" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from user
@@ -23,13 +24,13 @@
     insert into user (id, username, password,
       phone, create_time, update_time,
       description, qrcode, status,
-      avatar_url, salt, push_id
-      )
+      avatar_url, salt, push_id,
+      sex)
     values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
       #{phone,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
       #{description,jdbcType=VARCHAR}, #{qrcode,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER},
-      #{avatarUrl,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{pushId,jdbcType=VARCHAR}
-      )
+      #{avatarUrl,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{pushId,jdbcType=VARCHAR},
+      #{sex,jdbcType=BIT})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.qingying0.aqachat.entity.User">
     update user
@@ -43,30 +44,25 @@
       status = #{status,jdbcType=INTEGER},
       avatar_url = #{avatarUrl,jdbcType=VARCHAR},
       salt = #{salt,jdbcType=VARCHAR},
-      push_id = #{pushId,jdbcType=VARCHAR}
+      push_id = #{pushId,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select id, username, password, phone, create_time, update_time, description, qrcode,
-    status, avatar_url, salt, push_id
+    status, avatar_url, salt, push_id, sex
     from user
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select id, username, password, phone, create_time, update_time, description, qrcode,
-    status, avatar_url, salt, push_id
+    status, avatar_url, salt, push_id, sex
     from user
   </select>
   <select id="selectByPhone" resultMap="BaseResultMap">
     select id, username, password, phone, create_time, update_time, description, qrcode,
-    status, avatar_url, salt, push_id
+    status, avatar_url, salt, push_id, sex
     from user
     where phone = #{phone}
-  </select>
-  <select id="selectByUsername" resultMap="BaseResultMap">
-    select id, username, password, phone, create_time, update_time, description, qrcode,
-    status, avatar_url, salt, push_id
-    from user
-    where username = #{username}
   </select>
 </mapper>

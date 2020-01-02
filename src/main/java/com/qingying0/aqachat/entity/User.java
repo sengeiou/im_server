@@ -27,6 +27,8 @@ public class User {
 
     private String pushId;
 
+    private Boolean sex;
+
     public Long getId() {
         return id;
     }
@@ -121,5 +123,13 @@ public class User {
 
     public void setPushId(String pushId) {
         this.pushId = pushId;
+    }
+
+    public Boolean getSex() {
+        return sex;
+    }
+
+    public void setSex(Boolean sex) {
+        this.sex = sex;
     }
 }

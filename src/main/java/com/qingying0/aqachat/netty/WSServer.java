@@ -37,7 +37,7 @@ public class WSServer {
     }
 
 
-//    @PostConstruct
+    @PostConstruct
     public void start() {
         System.out.println("port = " + port);
         EventLoopGroup bossGroup = new NioEventLoopGroup();

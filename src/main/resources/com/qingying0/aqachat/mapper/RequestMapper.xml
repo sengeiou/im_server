@@ -10,16 +10,24 @@
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="INTEGER" />
   </resultMap>
+  <resultMap id="RequestDTO" type="com.qingying0.aqachat.dto.RequestDTO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="avatarUrl" property="avatarUrl" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from request
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.qingying0.aqachat.entity.Request" >
-    insert into request (id, send_id, target_id, 
-      content, create_time, type, 
+    insert into request (id, send_id, target_id,
+      content, create_time, type,
       status)
-    values (#{id,jdbcType=BIGINT}, #{sendId,jdbcType=BIGINT}, #{targetId,jdbcType=BIGINT}, 
-      #{content,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=BIGINT}, #{sendId,jdbcType=BIGINT}, #{targetId,jdbcType=BIGINT},
+      #{content,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER},
       #{status,jdbcType=INTEGER})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.qingying0.aqachat.entity.Request" >
@@ -40,5 +48,17 @@
   <select id="selectAll" resultMap="BaseResultMap" >
     select id, send_id, target_id, content, create_time, type, status
     from request
+  </select>
+  <select id="selectByTargetId" resultMap="RequestDTO">
+    select r.id as id, username, avatar_url, content, TYPE, r.`status` as status
+    from request r
+    left join user u
+    on r.target_id = u.id
+    where r.target_id = #{targetId};
+  </select>
+  <select id="selectBySendIdAndTargetId" resultMap="BaseResultMap">
+    select id, send_id, target_id, content, create_time, type, status
+    from request
+    where send_id = #{sendId} and target_id = #{targetId}
   </select>
 </mapper>

@@ -13,6 +13,8 @@ public enum CustomCode implements ICustomCode {
     SEARCH_OUR_FAIL(2007, "不能添加自己为好友"),
     FRIEND_RELATION_EXIST(2008, "已经添加为好友"),
     FAIL_REQUEST(2009, "不合法的请求"),
+    EXIST_FRIEND_REQUEST(2010, "已经发送好友请求,不能重复发送"),
+    REFUSE_REQUEST(2011, "好友请求被拒绝"),
     ;
 
     private String message;

@@ -11,11 +11,14 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+
 @Component
 public class WSServerInitialzer extends ChannelInitializer<SocketChannel> {
 
     @Autowired
     private WebsocketRouterHandler websocketRouterHandler;
+
 
     @Override
     protected void initChannel(SocketChannel channel) throws Exception {

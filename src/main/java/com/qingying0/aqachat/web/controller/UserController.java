@@ -21,8 +21,7 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
-    @Autowired
-    private IRequestService requestService;
+
 
     @GetMapping("/search_by_phone")
     public ResultDTO getUserByPhone(String phone) {
@@ -34,16 +33,6 @@ public class UserController {
         return ResultDTO.okOf(userService.getUserById(userId));
     }
 
-    @PostMapping("/friend_request")
-    public ResultDTO saveFriendRequest(Request request) {
-        requestService.saveFriendRequest(request);
-        return ResultDTO.okOf();
-    }
 
-    @PostMapping("/received_friend_request")
-    public ResultDTO updateFriendRequest(Long requestId,Integer status) {
-        requestService.updateFriendRequest(requestId, status);
-        return ResultDTO.okOf();
-    }
 
 }

@@ -9,11 +9,11 @@ import java.util.List;
 @Repository
 @Mapper
 public interface UserSessionMapper {
-    int deleteByPrimaryKey(Long sessionId);
+    int deleteByPrimaryKey(Long id);
 
     int insert(UserSession record);
 
-    UserSession selectByPrimaryKey(Long sessionId);
+    UserSession selectByPrimaryKey(Long id);
 
     List<UserSession> selectAll();
 

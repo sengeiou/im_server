@@ -23,13 +23,17 @@ public class UserSessionServiceImpl implements IUserSessionService {
     @Override
     public void saveUserSession(Long user1Id, Long user2Id) {
         UserSession userSession = new UserSession();
-        userSession.setSessionId(idWorker.nextId());
+        userSession.setId(idWorker.nextId());
         userSession.setOwnerId(user1Id);
-        String participantIds = user1Id < user2Id ? user1Id + "_" + user2Id : user2Id + "_" + user1Id;
-        userSession.setParticipantIds(participantIds);
-        userSession.setStatus(SystemConst.SESSION_OFF);
+        userSession.setTargetId(user2Id);
+        userSession.setStatus(SystemConst.SESSION_ON);
+        userSession.setUnreadNum(0);
+        userSession.setIsMuted(false);
+        userSession.setSessionId(idWorker.nextId());
         userSessionMapper.insert(userSession);
+        userSession.setId(idWorker.nextId());
         userSession.setOwnerId(user2Id);
+        userSession.setTargetId(user1Id);
         userSessionMapper.insert(userSession);
     }
 
