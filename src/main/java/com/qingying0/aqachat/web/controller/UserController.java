@@ -5,13 +5,13 @@ import com.qingying0.aqachat.dto.UserInfoDTO;
 import com.qingying0.aqachat.entity.Request;
 import com.qingying0.aqachat.service.IRequestService;
 import com.qingying0.aqachat.service.IUserService;
+import com.qingying0.aqachat.utils.QiNiuUpload;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.websocket.server.PathParam;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,8 +20,6 @@ public class UserController {
 
     @Autowired
     private IUserService userService;
-
-
 
     @GetMapping("/search_by_phone")
     public ResultDTO getUserByPhone(String phone) {
@@ -33,6 +31,32 @@ public class UserController {
         return ResultDTO.okOf(userService.getUserById(userId));
     }
 
+    @PostMapping("/upload")
+    public ResultDTO uploadFile(@RequestParam("file")MultipartFile file) {
+        try {
+            if (!file.isEmpty()) {
+                System.out.println("originalfilename = " + file.getOriginalFilename());
+                System.out.println("name = " + file.getName());
+            }
+            String path = QiNiuUpload.upload(file.getBytes(), file.getOriginalFilename());
 
+            return ResultDTO.okOf(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResultDTO.errorOf(2000, "上传错误");
+    }
+
+    @PostMapping("/updateAvatar")
+    public ResultDTO updateAvatar(String avatarUrl) {
+        userService.updateAvatarUrl(avatarUrl);
+        return ResultDTO.okOf();
+    }
+
+    @PostMapping("/updateData")
+    public ResultDTO updateUserData(String username, String description) {
+        userService.updateData(username, description);
+        return ResultDTO.okOf();
+    }
 
 }

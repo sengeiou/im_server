@@ -48,6 +48,18 @@
       sex = #{sex,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <update id="updateAvatarUrlById">
+    update user
+    set avatar_url = #{avatarUrl,jdbcType=VARCHAR}
+
+    where id = #{id}
+  </update>
+  <update id="updateUsernameAndDescription">
+    update user
+    set username = #{username,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR}
+    where id = #{id}
+  </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select id, username, password, phone, create_time, update_time, description, qrcode,
     status, avatar_url, salt, push_id, sex

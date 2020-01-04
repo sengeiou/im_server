@@ -18,4 +18,6 @@ public interface UserSessionMapper {
     List<UserSession> selectAll();
 
     int updateByPrimaryKey(UserSession record);
+
+    List<UserSession> selectByOwnId(Long userId);
 }

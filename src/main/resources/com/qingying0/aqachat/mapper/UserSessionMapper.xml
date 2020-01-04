@@ -12,6 +12,8 @@
     <result column="unread_num" jdbcType="INTEGER" property="unreadNum" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="is_muted" jdbcType="BIT" property="isMuted" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="session_type" jdbcType="INTEGER" property="sessionType" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from user_session
@@ -21,11 +23,13 @@
     insert into user_session (id, owner_id, target_id,
       session_id, nickname, create_time,
       update_time, unread_num, status,
-      is_muted)
+      is_muted, content, session_type
+      )
     values (#{id,jdbcType=BIGINT}, #{ownerId,jdbcType=BIGINT}, #{targetId,jdbcType=BIGINT},
       #{sessionId,jdbcType=BIGINT}, #{nickname,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
       #{updateTime,jdbcType=TIMESTAMP}, #{unreadNum,jdbcType=INTEGER}, #{status,jdbcType=INTEGER},
-      #{isMuted,jdbcType=BIT})
+      #{isMuted,jdbcType=BIT}, #{content,jdbcType=VARCHAR}, #{sessionType,jdbcType=INTEGER}
+      )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.qingying0.aqachat.entity.UserSession">
     update user_session
@@ -37,18 +41,26 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       unread_num = #{unreadNum,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
-      is_muted = #{isMuted,jdbcType=BIT}
+      is_muted = #{isMuted,jdbcType=BIT},
+      content = #{content,jdbcType=VARCHAR},
+      session_type = #{sessionType,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select id, owner_id, target_id, session_id, nickname, create_time, update_time, unread_num,
-    status, is_muted
+    status, is_muted, content, session_type
     from user_session
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select id, owner_id, target_id, session_id, nickname, create_time, update_time, unread_num,
-    status, is_muted
+    status, is_muted, content, session_type
     from user_session
+  </select>
+  <select id="selectByOwnId" resultMap="BaseResultMap">
+    select id, owner_id, target_id, session_id, nickname, create_time, update_time, unread_num,
+    status, is_muted, content, session_type
+    from user_session
+    where owner_id = #{ownerId}
   </select>
 </mapper>

@@ -23,6 +23,10 @@ public class UserSession {
 
     private Boolean isMuted;
 
+    private String content;
+
+    private Integer sessionType;
+
     public Long getId() {
         return id;
     }
@@ -101,5 +105,21 @@ public class UserSession {
 
     public void setIsMuted(Boolean isMuted) {
         this.isMuted = isMuted;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Integer getSessionType() {
+        return sessionType;
+    }
+
+    public void setSessionType(Integer sessionType) {
+        this.sessionType = sessionType;
     }
 }

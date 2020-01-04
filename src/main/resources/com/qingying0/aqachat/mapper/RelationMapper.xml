@@ -8,6 +8,15 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="INTEGER" />
   </resultMap>
+  <resultMap id="FriendDTOMap" type="com.qingying0.aqachat.dto.FriendDTO" >
+    <result column="id" property="id" jdbcType="BIGINT" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="avatar_url" property="avatarUrl" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="sex" jdbcType="BIT" property="sex" />
+  </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from relation
     where id = #{id,jdbcType=BIGINT}
@@ -39,5 +48,12 @@
     select id, user_id, friend_id, create_time, status
     from relation
     where user_id = #{userId} and friend_id = #{friendId}
+  </select>
+  <select id="selectByUserId" resultMap="FriendDTOMap">
+    select u.id as id, username, avatar_url, description, u.create_time as create_time, sex
+    from relation r
+    left join user u
+    on r.`friend_id` = u.`id`
+    where r.`user_id` = #{userId}
   </select>
 </mapper>

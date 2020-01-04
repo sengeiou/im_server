@@ -13,4 +13,8 @@ public interface IUserService {
     UserInfoDTO getUserById(Long id);
 
     UserInfoDTO getUserByPhone(String phone);
+
+    void updateAvatarUrl(String avatarUrl);
+
+    void updateData(String username, String description);
 }

@@ -9,6 +9,7 @@ import com.qingying0.aqachat.enums.RequestStatusEnum;
 import com.qingying0.aqachat.exception.CustomCode;
 import com.qingying0.aqachat.exception.CustomException;
 import com.qingying0.aqachat.mapper.RequestMapper;
+import com.qingying0.aqachat.netty.handler.WebsocketRouterHandler;
 import com.qingying0.aqachat.service.IRelationService;
 import com.qingying0.aqachat.service.IRequestService;
 import com.qingying0.aqachat.service.IUserSessionService;
@@ -45,6 +46,9 @@ public class RequestServiceImpl implements IRequestService {
 
     @Autowired
     private IUserSessionService userSessionService;
+
+    @Autowired
+    private WebsocketRouterHandler websocketRouterHandler;
 
     /**
      * 保存好友请求，设置请求状态为已发送
@@ -97,6 +101,7 @@ public class RequestServiceImpl implements IRequestService {
             userSessionService.saveUserSession(request.getSendId(), request.getTargetId());
             request.setStatus(status);
             requestMapper.updateByPrimaryKey(request);
+//            websocketRouterHandler.sendAddFriendMsg(request.getSendId(), request.getTargetId());
             return request;
         }
         if(status.equals(RequestStatusEnum.FAIL.status)) {

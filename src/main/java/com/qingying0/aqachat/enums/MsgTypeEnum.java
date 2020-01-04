@@ -1,6 +1,6 @@
 package com.qingying0.aqachat.enums;
 
-import lombok.Data;
+
 
 public enum MsgTypeEnum {
     HEART(0),

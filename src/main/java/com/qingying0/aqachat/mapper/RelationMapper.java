@@ -1,5 +1,6 @@
 package com.qingying0.aqachat.mapper;
 
+import com.qingying0.aqachat.dto.FriendDTO;
 import com.qingying0.aqachat.entity.Relation;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -21,4 +22,6 @@ public interface RelationMapper {
     int updateByPrimaryKey(Relation record);
 
     Relation selectByUserAndFriend(@Param("userId") Long userId, @Param("friendId") Long friendId);
+
+    List<FriendDTO> selectByUserId(Long userId);
 }

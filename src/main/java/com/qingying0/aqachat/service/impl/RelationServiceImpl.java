@@ -1,5 +1,7 @@
 package com.qingying0.aqachat.service.impl;
 
+import com.qingying0.aqachat.component.HostHolder;
+import com.qingying0.aqachat.dto.FriendDTO;
 import com.qingying0.aqachat.entity.Relation;
 import com.qingying0.aqachat.mapper.RelationMapper;
 import com.qingying0.aqachat.service.IRelationService;
@@ -9,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 好友关系表
@@ -21,6 +25,9 @@ public class RelationServiceImpl implements IRelationService {
 
     @Autowired
     private IdWorker idWorker;
+
+    @Autowired
+    private HostHolder hostHolder;
 
     /**
      * 查找用户和好友的关系是否存在
@@ -55,5 +62,13 @@ public class RelationServiceImpl implements IRelationService {
         relation2.setStatus(SystemConst.RELATION_FRIEND);
         relationMapper.insert(relation1);
         relationMapper.insert(relation2);
+    }
+
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public List<FriendDTO> getFriends() {
+        List<FriendDTO> friendDTOS = relationMapper.selectByUserId(hostHolder.getUserId());
+        return friendDTOS;
     }
 }

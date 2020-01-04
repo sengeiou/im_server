@@ -2,6 +2,7 @@ package com.qingying0.aqachat.mapper;
 
 import com.qingying0.aqachat.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,4 +21,8 @@ public interface UserMapper {
     int updateByPrimaryKey(User record);
 
     User selectByPhone(String phone);
+
+    void updateAvatarUrlById(@Param("id") Long id, @Param("avatarUrl") String avatarUrl);
+
+    void updateUsernameAndDescription(@Param("id") Long id, @Param("username") String username, @Param("description") String description);
 }

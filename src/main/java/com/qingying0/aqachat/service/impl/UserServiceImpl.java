@@ -126,4 +126,16 @@ public class UserServiceImpl implements IUserService {
         BeanUtils.copyProperties(user, userInfoDTO);
         return userInfoDTO;
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateAvatarUrl(String avatarUrl) {
+        userMapper.updateAvatarUrlById(hostHolder.getUserId(), avatarUrl);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateData(String username, String description) {
+        userMapper.updateUsernameAndDescription(hostHolder.getUserId(), username, description);
+    }
 }
