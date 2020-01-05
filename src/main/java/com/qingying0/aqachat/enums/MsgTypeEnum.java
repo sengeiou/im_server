@@ -9,6 +9,8 @@ public enum MsgTypeEnum {
     FRIEND(3),
     SESSION(4),
     REQUEST(5),
+    ACKMESSAGE(6),
+    ACK(7),
     ;
 
     int type;

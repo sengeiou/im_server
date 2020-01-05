@@ -17,4 +17,6 @@ public class SystemConst {
     public static Integer SESSION_TYPE_USER = 0;
     public static Integer SESSION_TYPE_GROUP = 1;
 
+    public static Integer FRIEND_ONLINE = 0;
+    public static Integer FRIEND_OFFLINE = 1;
 }

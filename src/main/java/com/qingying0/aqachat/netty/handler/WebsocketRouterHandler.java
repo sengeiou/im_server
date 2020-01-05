@@ -3,10 +3,8 @@ package com.qingying0.aqachat.netty.handler;
 import com.alibaba.fastjson.JSONObject;
 import com.qingying0.aqachat.entity.Message;
 import com.qingying0.aqachat.enums.MsgTypeEnum;
-import com.qingying0.aqachat.netty.handlers.FriendHandler;
-import com.qingying0.aqachat.netty.handlers.MessageHandler;
-import com.qingying0.aqachat.netty.handlers.MsgHandler;
-import com.qingying0.aqachat.netty.handlers.SessionHandler;
+import com.qingying0.aqachat.netty.UserChannelRelation;
+import com.qingying0.aqachat.netty.handlers.*;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -36,27 +34,20 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<TextWebS
     private FriendHandler friendHandler;
     @Autowired
     private MessageHandler messageHandler;
+    @Autowired
+    private AckHandler ackHandler;
 
-    private static final ConcurrentHashMap<Long, Channel> userChannel = new ConcurrentHashMap<>(15000);
-    private static ChannelGroup clients = new DefaultChannelGroup(null);
-    @Override
-    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-        clients.add(ctx.channel());
-    }
-
-    @Override
-    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-        clients.remove(ctx.channel());
-    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame textWebSocketFrame) throws Exception {
         String msg = textWebSocketFrame.text();
         JSONObject msgJson = JSONObject.parseObject(msg);
         Integer type = msgJson.getInteger("type");
+        System.out.println("----------------------------------------------");
         System.out.println(msg);
         switch (MsgTypeEnum.HEART.getByType(type)) {
             case HEART: //心跳
+                ctx.channel().writeAndFlush(new TextWebSocketFrame(ackHandler.getAckHeart()));
                 break;
             case ONLINE: //上线
                 JSONObject onlineData = msgJson.getJSONObject("data");
@@ -64,12 +55,16 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<TextWebS
                 int onlinetype = onlineData.getInteger("type");
                 if(onlinetype == 0) {
                     log.info("userId = " + userId + ":上线");
-                    userChannel.put(userId, ctx.channel());
+                    UserChannelRelation.setUserChannel(userId, ctx.channel());
+                    UserChannelRelation.setChannelUserId(ctx.channel(), userId);
+                    ctx.channel().writeAndFlush(new TextWebSocketFrame(ackHandler.getAckOnlineMsg()));
                 }
-                if(onlinetype == 1) {
-                    log.info("userId = " + userId + ":下线");
-                    userChannel.remove(userId);
-                }
+
+//                if(onlinetype == 1) {
+//                    log.info("userId = " + userId + ":下线");
+//                    userChannel.remove(userId);
+//                }
+
                 break;
             case SENDMESSAGE: //发送消息
                 JSONObject sendMessageData = msgJson.getJSONObject("data");
@@ -81,11 +76,11 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<TextWebS
                 System.out.println(sendMessageData.toJSONString());
                 Message message = new Message();
                 message.setSendId(sendId);
-                message.setSendId(sessionId);
                 message.setType(sendType);
                 message.setContent(content);
                 message.setTargetId(targetId);
-//                messageHandler.saveMessageAndSendMsg();
+                message.setSessionId(sessionId);
+                messageHandler.saveMessageAndSendMsg(message);
                 break;
             case FRIEND: //好友相关
                 break;
@@ -98,9 +93,68 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<TextWebS
         }
     }
 
-    public Channel getChannelByUserId(Long userId) {
-        return userChannel.get(userId);
+    @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("channel register");
+        super.channelRegistered(ctx);
     }
 
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("channel unregister");
+        super.channelUnregistered(ctx);
+    }
 
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("channel active");
+        super.channelActive(ctx);
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("channel unactive");
+        super.channelInactive(ctx);
+    }
+
+//    @Override
+//    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+//        System.out.println("channel read finish");
+//        super.channelReadComplete(ctx);
+//    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        System.out.println("用户事件触发");
+        super.userEventTriggered(ctx, evt);
+    }
+
+    @Override
+    public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("可写更改");
+        super.channelWritabilityChanged(ctx);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        System.out.println("发生异常");
+        super.exceptionCaught(ctx, cause);
+    }
+
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        super.handlerAdded(ctx);
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("remove handler");
+        Long userId = UserChannelRelation.getChannelUserId(ctx.channel());
+        if(userId != null) {
+            UserChannelRelation.removeUserChannel(userId);
+            log.info("用户:" + userId + "下线");
+        }
+        UserChannelRelation.removeChannelUserId(ctx.channel());
+        super.handlerRemoved(ctx);
+    }
 }

@@ -7,12 +7,19 @@ public enum  RelationStatusEnum {
     SHIELDING(2, "屏蔽"),
     ;
 
-    public final Integer status;
-    public final String msg;
+    Integer status;
+    String msg;
 
     RelationStatusEnum(Integer status, String msg) {
         this.status = status;
         this.msg = msg;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
 }

@@ -4,6 +4,8 @@ import com.qingying0.aqachat.component.HostHolder;
 import com.qingying0.aqachat.dto.FriendDTO;
 import com.qingying0.aqachat.entity.Relation;
 import com.qingying0.aqachat.mapper.RelationMapper;
+import com.qingying0.aqachat.netty.UserChannelRelation;
+import com.qingying0.aqachat.netty.handler.WebsocketRouterHandler;
 import com.qingying0.aqachat.service.IRelationService;
 import com.qingying0.aqachat.utils.IdWorker;
 import com.qingying0.aqachat.utils.SystemConst;
@@ -28,6 +30,9 @@ public class RelationServiceImpl implements IRelationService {
 
     @Autowired
     private HostHolder hostHolder;
+
+    @Autowired
+    private WebsocketRouterHandler websocketRouterHandler;
 
     /**
      * 查找用户和好友的关系是否存在
@@ -69,6 +74,13 @@ public class RelationServiceImpl implements IRelationService {
     @Override
     public List<FriendDTO> getFriends() {
         List<FriendDTO> friendDTOS = relationMapper.selectByUserId(hostHolder.getUserId());
+        for(FriendDTO friendDTO : friendDTOS) {
+            if(UserChannelRelation.getUserChannel(friendDTO.getId()) != null) {
+                friendDTO.setStatus(SystemConst.FRIEND_ONLINE);
+            } else {
+                friendDTO.setStatus(SystemConst.FRIEND_OFFLINE);
+            }
+        }
         return friendDTOS;
     }
 }

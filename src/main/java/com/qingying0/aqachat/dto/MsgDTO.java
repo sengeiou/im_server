@@ -7,5 +7,4 @@ public class MsgDTO {
 
     private Integer type;
     private Object data;
-
 }
