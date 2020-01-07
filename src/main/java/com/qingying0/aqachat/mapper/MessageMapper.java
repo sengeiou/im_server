@@ -18,4 +18,8 @@ public interface MessageMapper {
     List<Message> selectAll();
 
     int updateByPrimaryKey(Message record);
+
+    List<Message> selectBySessionId(Long sessionId);
+
+    List<Message> selectByTargetId(Long targetId);
 }

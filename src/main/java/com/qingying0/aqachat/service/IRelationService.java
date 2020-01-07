@@ -11,4 +11,6 @@ public interface IRelationService {
     void saveRelation(Long user1Id, Long user2Id);
 
     List<FriendDTO> getFriends();
+
+    List<FriendDTO> getFriendsByUserId(Long sendId);
 }

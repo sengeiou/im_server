@@ -5,22 +5,15 @@ import com.qingying0.aqachat.entity.Message;
 import com.qingying0.aqachat.enums.MsgTypeEnum;
 import com.qingying0.aqachat.netty.UserChannelRelation;
 import com.qingying0.aqachat.netty.handlers.*;
-import io.netty.channel.Channel;
+import com.qingying0.aqachat.service.IMessageService;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.ConcurrentHashMap;
-
-/**
- * 服务端处理所有接收消息的handler，这里只是示例，没有拆分太细，建议实际项目中按消息类型拆分到不同的handler中。
- */
 @ChannelHandler.Sharable
 @Component
 @Slf4j
@@ -28,15 +21,21 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<TextWebS
 
     @Autowired
     private SessionHandler sessionHandler;
+
     @Autowired
     private MsgHandler msgHandler;
+
     @Autowired
     private FriendHandler friendHandler;
+
     @Autowired
     private MessageHandler messageHandler;
+
     @Autowired
     private AckHandler ackHandler;
 
+    @Autowired
+    private IMessageService messageService;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame textWebSocketFrame) throws Exception {
@@ -58,13 +57,17 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<TextWebS
                     UserChannelRelation.setUserChannel(userId, ctx.channel());
                     UserChannelRelation.setChannelUserId(ctx.channel(), userId);
                     ctx.channel().writeAndFlush(new TextWebSocketFrame(ackHandler.getAckOnlineMsg()));
+                    messageHandler.sendUnreceivedMessage(userId);
                 }
-
-//                if(onlinetype == 1) {
-//                    log.info("userId = " + userId + ":下线");
-//                    userChannel.remove(userId);
-//                }
-
+                if(onlinetype == 1) {
+                    log.info("userId = " + userId + ":下线");
+                    Long logoutId = UserChannelRelation.getChannelUserId(ctx.channel());
+                    if(userId != null) {
+                        UserChannelRelation.removeUserChannel(userId);
+                        log.info("用户 :" + logoutId + "下线");
+                    }
+                    UserChannelRelation.removeChannelUserId(ctx.channel());
+                }
                 break;
             case SENDMESSAGE: //发送消息
                 JSONObject sendMessageData = msgJson.getJSONObject("data");
@@ -84,66 +87,33 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<TextWebS
                 break;
             case FRIEND: //好友相关
                 break;
-            case SESSION: //会话相关
+            case SESSION:
+                JSONObject sessionData = msgJson.getJSONObject("data");
+                System.out.println(sessionData.toJSONString());
+                Integer sessionType = sessionData.getInteger("type");
+                if(sessionType.equals(new Integer(0))) {
+                    System.out.println("点开session id = " + sessionData.getLong("data"));
+                    sessionHandler.updateSessionByOpenSession(sessionData.getLong("data"), UserChannelRelation.getChannelUserId(ctx.channel()));
+                }
                 break;
             case REQUEST: //请求相关
+                break;
+            case ACKMESSAGE:
+                break;
+            case ACK:
+                JSONObject ackMessageData = msgJson.getJSONObject("data");
+                int ackType = ackMessageData.getIntValue("type");
+                System.out.println("ack = " + ackMessageData.toJSONString());
+                System.out.println("acttype = " + ackType);
+                if(ackType == 0) {
+                    System.out.println("delete" + ackMessageData.getLong("id"));
+                    Long messageId = ackMessageData.getLong("id");
+                    messageService.deleteMessageById(messageId);
+                }
                 break;
             default:
                 break;
         }
-    }
-
-    @Override
-    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("channel register");
-        super.channelRegistered(ctx);
-    }
-
-    @Override
-    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("channel unregister");
-        super.channelUnregistered(ctx);
-    }
-
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("channel active");
-        super.channelActive(ctx);
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("channel unactive");
-        super.channelInactive(ctx);
-    }
-
-//    @Override
-//    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-//        System.out.println("channel read finish");
-//        super.channelReadComplete(ctx);
-//    }
-
-    @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        System.out.println("用户事件触发");
-        super.userEventTriggered(ctx, evt);
-    }
-
-    @Override
-    public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("可写更改");
-        super.channelWritabilityChanged(ctx);
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        System.out.println("发生异常");
-        super.exceptionCaught(ctx, cause);
-    }
-
-    @Override
-    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-        super.handlerAdded(ctx);
     }
 
     @Override

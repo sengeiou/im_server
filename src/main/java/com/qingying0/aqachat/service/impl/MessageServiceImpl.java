@@ -6,6 +6,8 @@ import com.qingying0.aqachat.service.IMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MessageServiceImpl implements IMessageService {
 
@@ -15,5 +17,15 @@ public class MessageServiceImpl implements IMessageService {
     @Override
     public void saveMessage(Message message) {
         messageMapper.insert(message);
+    }
+
+    @Override
+    public void deleteMessageById(Long id) {
+        messageMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public List<Message> getByTargetId(Long targetId) {
+        return messageMapper.selectByTargetId(targetId);
     }
 }

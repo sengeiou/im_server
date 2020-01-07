@@ -6,10 +6,7 @@ import com.qingying0.aqachat.entity.Message;
 import com.qingying0.aqachat.enums.MessageStatusEnum;
 import com.qingying0.aqachat.enums.MsgTypeEnum;
 import com.qingying0.aqachat.netty.UserChannelRelation;
-import com.qingying0.aqachat.netty.handler.WebsocketRouterHandler;
 import com.qingying0.aqachat.service.IMessageService;
-import com.qingying0.aqachat.service.IRelationService;
-import com.qingying0.aqachat.service.IUserService;
 import com.qingying0.aqachat.utils.IdWorker;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -17,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class MessageHandler {
@@ -27,6 +25,9 @@ public class MessageHandler {
     @Autowired
     private IMessageService messageService;
 
+    @Autowired
+    private SessionHandler sessionHandler;
+
     /**
      * 保存和发送message相关的消息
      * @param message
@@ -35,10 +36,8 @@ public class MessageHandler {
         message.setId(idWorker.nextId());
         message.setCreateTime(new Date());
         message.setStatus(MessageStatusEnum.SEND.getStatus());
-        messageService.saveMessage(message);
         sendAckMsg(message);
         sendMsg(message);
-
     }
 
     /**
@@ -51,18 +50,25 @@ public class MessageHandler {
             System.out.println("sendId = " + message.getSendId() + "用户不在线");
         }
         if(channel != null) {
+            System.out.println("sendId = " + message.getSendId() + "send = " + getAckMsgDTO(message));
             channel.writeAndFlush(new TextWebSocketFrame(getAckMsgDTO(message)));
         }
     }
 
+    /**
+     * 发送消息给接收者
+     * @param message
+     */
     public void sendMsg(Message message) {
         Channel channel = UserChannelRelation.getUserChannel(message.getTargetId());
         if(channel == null) {
-            System.out.println("targetId = " + message.getSendId() + "用户不在线");
+            messageService.saveMessage(message);
+            System.out.println("targetId = " + message.getTargetId() + "用户不在线");
         }
         if(channel != null) {
             channel.writeAndFlush(new TextWebSocketFrame(getMsgDTO(message)));
         }
+        sessionHandler.updateSessionBySendMessage(message);
     }
 
     public String getMsgDTO(Message message) {
@@ -72,10 +78,26 @@ public class MessageHandler {
         return JSON.toJSONString(msgDTO);
     }
 
+    public String getLoginMsgDTO(Message message) {
+        MsgDTO msgDTO = new MsgDTO();
+        msgDTO.setType(MsgTypeEnum.ONLINE.getType());
+        msgDTO.setData(message);
+        return JSON.toJSONString(msgDTO);
+    }
+
     public String getAckMsgDTO(Message message) {
         MsgDTO msgDTO = new MsgDTO();
         msgDTO.setType(MsgTypeEnum.ACKMESSAGE.getType());
         msgDTO.setData(message);
         return JSON.toJSONString(msgDTO);
+    }
+
+    public void sendUnreceivedMessage(Long userId) {
+        List<Message> listMessage = messageService.getByTargetId(userId);
+        Channel channel = UserChannelRelation.getUserChannel(userId);
+        for(Message message : listMessage) {
+            System.out.println("sendMessage" + getLoginMsgDTO(message));
+            channel.writeAndFlush(new TextWebSocketFrame(getLoginMsgDTO(message)));
+        }
     }
 }

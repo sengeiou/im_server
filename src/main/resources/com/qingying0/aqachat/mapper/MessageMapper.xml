@@ -16,11 +16,11 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.qingying0.aqachat.entity.Message" >
-    insert into message (id, content, create_time, 
-      send_id, target_id, type, 
+    insert into message (id, content, create_time,
+      send_id, target_id, type,
       status, session_id)
-    values (#{id,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{sendId,jdbcType=BIGINT}, #{targetId,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+      #{sendId,jdbcType=BIGINT}, #{targetId,jdbcType=BIGINT}, #{type,jdbcType=INTEGER},
       #{status,jdbcType=INTEGER}, #{sessionId,jdbcType=BIGINT})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.qingying0.aqachat.entity.Message" >
@@ -43,4 +43,15 @@
     select id, content, create_time, send_id, target_id, type, status, session_id
     from message
   </select>
+  <select id="selectBySessionId" resultMap="BaseResultMap">
+    select id, content, create_time, send_id, target_id, type, status, session_id
+    from message
+    where session_id = #{sessionId}
+  </select>
+  <select id="selectByTargetId" resultMap="BaseResultMap">
+    select id, content, create_time, send_id, target_id, type, status, session_id
+    from message
+    where target_id = #{targetId}
+  </select>
+
 </mapper>

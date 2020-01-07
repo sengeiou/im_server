@@ -10,6 +10,7 @@ import com.qingying0.aqachat.exception.CustomException;
 import com.qingying0.aqachat.mapper.UserMapper;
 import com.qingying0.aqachat.service.IRelationService;
 import com.qingying0.aqachat.service.IUserService;
+import com.qingying0.aqachat.service.IUserSessionService;
 import com.qingying0.aqachat.utils.IdWorker;
 import com.qingying0.aqachat.utils.MD5utils;
 import com.qingying0.aqachat.utils.RedisKeyUtils;
@@ -40,6 +41,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private IRelationService relationService;
+
+    @Autowired
+    private IUserSessionService userSessionService;
 
     /**
      * 用户注册
@@ -136,6 +140,7 @@ public class UserServiceImpl implements IUserService {
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void updateData(String username, String description) {
+        userSessionService.updateNickname(username);
         userMapper.updateUsernameAndDescription(hostHolder.getUserId(), username, description);
     }
 }

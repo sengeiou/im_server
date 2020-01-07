@@ -2,6 +2,7 @@ package com.qingying0.aqachat.service.impl;
 
 import com.qingying0.aqachat.component.HostHolder;
 import com.qingying0.aqachat.dto.UserInfoDTO;
+import com.qingying0.aqachat.entity.Message;
 import com.qingying0.aqachat.entity.User;
 import com.qingying0.aqachat.entity.UserSession;
 import com.qingying0.aqachat.mapper.UserSessionMapper;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -63,4 +65,21 @@ public class UserSessionServiceImpl implements IUserSessionService {
     }
 
 
+    @Override
+    public void updateUserUnreadnumZero(Long sessionId, Long userId) {
+        userSessionMapper.updateUnreadnumZeroBySessionIdAndUserId(sessionId, userId);
+    }
+
+    @Override
+    public void updateNickname(String nickname) {
+        userSessionMapper.updateNickname(hostHolder.getUserId(), nickname);
+    }
+
+    @Override
+    public void updateSessionBySendMessage(Message message) {
+        if(message.getType().equals(new Integer(0))) {
+            userSessionMapper.updateBySendMessage(message.getSessionId(), message.getContent(), message.getCreateTime());
+        }
+        userSessionMapper.updateUnreadNumAdd(message.getSessionId(), message.getTargetId());
+    }
 }
